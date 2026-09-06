@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Sukhumvit Set', 'Kanit', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .btn-next {
+      background: #ff6b81;
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .btn-next:hover {
+      transform: scale(1.05);
+    }
+
+    /* Page 1: Passcode */
+    .pin-display {
+      font-size: 24px;
+      letter-spacing: 12px;
+      margin: 20px 0;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ff6b81;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .btn-key {
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      background: #ffffff;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      margin: 0 auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      cursor: pointer;
+      color: #444;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .btn-key:active {
+      transform: scale(0.95);
+      background: #ff6b81;
+      color: white;
+    }
+
+    .btn-clear {
+      background: #ffe0e6;
+      color: #ff6b81;
+      font-size: 14px;
+    }
+
+    /* Page 2: Envelope */
+    .envelope {
+      font-size: 80px;
+      cursor: pointer;
+      margin: 20px 0;
+      display: inline-block;
+      animation: wiggle 1.2s infinite ease-in-out;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-10deg) scale(1.1); }
+      75% { transform: rotate(10deg) scale(1.1); }
+    }
+
+    .gift-content img {
+      max-width: 200px;
+      border-radius: 15px;
+      margin-bottom: 15px;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 25px;
+      position: relative;
+      min-height: 60px;
+    }
+
+    .btn-choice {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: top 0.2s ease, left 0.2s ease;
+    }
+
+    .btn-yes {
+      background: #ff6b81;
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3);
+    }
+
+    .btn-no {
+      background: #e0e0e0;
+      color: #666;
+      position: absolute;
+    }
+
+    /* Page 3: Show Photos One by One */
+    .photo-display-container {
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 15px 0;
+    }
+
+    .single-photo-card {
+      background: white;
+      padding: 10px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 300px;
+      animation: zoomIn 0.5s ease-out;
+    }
+
+    .single-photo-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .wish-text {
+      padding: 10px;
+      color: #ff6b81;
+      font-weight: bold;
+      font-size: 15px;
+      margin-top: 8px;
+    }
+
+    .photo-counter {
+      font-size: 13px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    /* Page 4: Auto Slideshow (13 Photos) */
+    .slideshow-card {
+      background: white;
+      padding: 10px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 320px;
+      margin: 15px auto;
+      overflow: hidden;
+    }
+
+    .slideshow-card img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 10px;
+      animation: zoomIn 0.5s ease-out;
+    }
+
+    .sparkle {
+      position: fixed;
+      top: -20px;
+      color: #fff;
+      font-size: 16px;
+      user-select: none;
+      pointer-events: none;
+      z-index: 999;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(105vh) rotate(360deg);
+      }
+    }
+
+    /* Page 5: Black Cat GIF & Clickable Area */
+    .click-area {
+      cursor: pointer;
+      padding: 10px;
+    }
+
+    .big-title {
+      font-size: 26px;
+      color: #ff6b81;
+      font-weight: bold;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+
+    .cat-gif {
+      width: 220px;
+      border-radius: 15px;
+      margin: 10px 0;
+    }
+
+    /* Page 7: Layout สมุดบันทึกไดอารี่ */
+    .diary-page {
+      background: #fff8f0;
+      border: 2px dashed #ffb6c1;
+      border-radius: 15px;
+      padding: 15px;
+      margin: 15px 0;
+      min-height: 380px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+    }
+
+    .polaroid-item {
+      background: white;
+      padding: 8px 8px 18px 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      width: 100px;
+      text-align: center;
+      animation: zoomIn 0.4s ease-out;
+      transition: transform 0.3s ease;
+    }
+
+    .polaroid-item img {
+      width: 100%;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 2px;
+    }
+
+    .polaroid-item:nth-child(odd) {
+      transform: rotate(-4deg);
+    }
+
+    .polaroid-item:nth-child(even) {
+      transform: rotate(5deg);
+    }
+
+    .polaroid-item:nth-child(3n) {
+      transform: rotate(-2deg);
+    }
+
+    .polaroid-item:hover {
+      transform: scale(1.1) rotate(0deg);
+      z-index: 10;
+    }
+
+    /* Style สำหรับ Modal Pop-up */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      animation: zoomIn 0.3s ease;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Keyframe Animations */
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- เพลงสำหรับเล่นคลอ (ใส่ชื่อไฟล์เพลงของคุณในเครื่องตรง src) -->
+  <audio id="bgMusic" loop src="Best Part.mp3"></audio>
+
+  <!-- หน้าที่ 1: กรอกรหัสผ่าน -->
+  <div id="page1" class="card">
+    <h2 style="color: #ff6b81;">🔐 โปรดใส่รหัสผ่าน</h2>
+    <p style="color: #666; font-size: 14px; margin-top: 5px;">(ใส่รหัสผ่าน 4 หลัก เพื่อดูความลับ)</p>
+    
+    <div class="pin-display" id="pinDisplay">____</div>
+
+    <div class="keypad">
+      <button class="btn-key" onclick="pressKey('1')">1</button>
+      <button class="btn-key" onclick="pressKey('2')">2</button>
+      <button class="btn-key" onclick="pressKey('3')">3</button>
+      <button class="btn-key" onclick="pressKey('4')">4</button>
+      <button class="btn-key" onclick="pressKey('5')">5</button>
+      <button class="btn-key" onclick="pressKey('6')">6</button>
+      <button class="btn-key" onclick="pressKey('7')">7</button>
+      <button class="btn-key" onclick="pressKey('8')">8</button>
+      <button class="btn-key" onclick="pressKey('9')">9</button>
+      <button class="btn-key btn-clear" onclick="clearPin()">C</button>
+      <button class="btn-key" onclick="pressKey('0')">0</button>
+      <button class="btn-key btn-clear" onclick="deleteLast()">⌫</button>
+    </div>
+  </div>
+
+  <!-- หน้าที่ 2: ซองจดหมายดุ๊กดิ๊ก + ปุ่มวิ่งหนี -->
+  <div id="page2" class="card hidden">
+    <h2 style="color: #ff6b81;">💌 มีข้อความพิเศษถึงคุณ</h2>
+    
+    <div id="envelope" class="envelope" onclick="openEnvelope()">✉️</div>
+
+    <div id="giftContent" class="gift-content hidden">
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3Z2b3F3ZjR3Mmxubjh5OW44bHowM29pMWJwb2JmczByNXhic2I1biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Lq0h93752f6J9tijrh/giphy.gif" alt="GIF น่ารักๆ">
+      <h3 style="color: #444; margin-bottom: 10px;">พร้อมหรือยังเอ่ย? 🥺</h3>
+      
+      <div class="btn-group" id="btnGroup">
+        <button class="btn-choice btn-yes" onclick="goToPage(3)">พร้อมที่สุดเลย! ❤️</button>
+        <button class="btn-choice btn-no" id="noBtn" onmouseover="moveButton()">ยังไม่พร้อม 😜</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- หน้าที่ 3: โชว์รูปภาพทีละรูปเมื่อกดคลิก -->
+  <div id="page3" class="card hidden">
+    <h2 style="color: #ff6b81;">🎂🎉 SURPRISE! ✨ 🐶</h2>
+    <p class="photo-counter" id="photoCounter">รูปที่ 1 จาก 3 (คลิกที่รูปเพื่อดูรูปถัดไป)</p>
+
+    <div class="photo-display-container">
+      <div class="single-photo-card" id="photoCard" onclick="nextPhoto()">
+        <img id="currentImg" src="pdan.jpg" alt="รูปความทรงจำ">
+        <div class="wish-text" id="currentWish">ทาด๊าาาาา เซอร์ไพร์!! ✨🐶</div>
+      </div>
+    </div>
+
+    <button id="btnToPage4" class="btn-next hidden" onclick="goToPage(4)">ไปหน้าถัดไป ➔</button>
+  </div>
+
+  <!-- หน้าที่ 4: แสดงสไลด์โชว์ 13 รูปอัตโนมัติพร้อมเพลง -->
+  <div id="page4" class="card hidden">
+    <h2 style="color: #ff6b81;">😾🫂 ข้างๆแกจะมีเราเสมอ 🌼🐶</h2>
+    <p class="photo-counter" id="page4Counter">กำลังแสดงรูปภาพใบที่ 1 จาก 13...</p>
+
+    <div class="slideshow-card">
+      <img id="page4Img" src="1.png" alt="Precious Moment">
+    </div>
+
+    <button id="btnToPage5" class="btn-next hidden" onclick="goToPage(5)">ไปหน้าถัดไป ➔</button>
+  </div>
+
+  <!-- หน้าที่ 5: GIF แมวดำกวนๆ + ข้อความตัวใหญ่ -->
+  <div id="page5" class="card hidden">
+    <div class="click-area" onclick="goToPage(6)">
+      <div class="big-title">ชอบมั้ย ชอบม่ายยย<br>หวังว่าจะชอบน้าา 😼✨</div>
+      <img class="cat-gif" src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3NmtpdmE0Z2xxMTMxYmhsaGd4aDR4NXRxcGliNmZiNDVvY2IxOWNuMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xun2qNfnK1cV5r07GM/giphy.gif" alt="Black Cat GIF">
+      <p style="color: #888; font-size: 13px; margin-top: 10px;">(แตะตรงไหนก็ได้เพื่อไปต่อ...)</p>
+    </div>
+  </div>
+
+  <!-- หน้าที่ 6: ข้อความความในใจ + ปุ่มไปหน้า 7 -->
+  <div id="page6" class="card hidden">
+    <h1 style="color: #ff6b81; font-size: 45px; margin-bottom: 10px;">💖</h1>
+    <h2 style="color: #ff6b81; margin-bottom: 15px;">ความในใจถึงคนพิเศษ</h2>
+    <p style="color: #555; line-height: 1.8; font-size: 15px;">
+      ขอบคุณสำหรับทุกๆ อย่างที่ผ่านมานะครับ<br>
+      ขอบคุณที่เข้ามาเติมเต็มความสุขและรอยยิ้มในทุกๆวัน<br>
+      ขอให้วันเกิดปีนี้มีแต่ความสุข เติมหวานเยอะๆนะครับแล้วก็ถ้าแต่งงานเมื่อไรก็อย่าลืมส่งการ์ดมาให้กันบ้างน้าา<br>
+      ขอให้ได้ใช้ชีวิตในแบบที่อยากใช้นะครับ ภูมิใจในตัวเองเยอะๆน้าา รักตัวเองให้มากๆด้วยย<br>
+      ขับขี่ก็ปลอดภัยน้าา แอลลดได้ก็ลดบ้างน้าาคนเก่ง <br>
+      อยู่เป็นความน่ารักและความสบายใจให้พี่คนสวยไปนานๆนะครับ 💕✨
+    </p>
+
+    <button class="btn-next" onclick="goToPage(7)">ไปหน้าถัดไป ➔</button>
+  </div>
+
+  <!-- หน้าที่ 7: สมุดบันทึกไดอารี่ แปะรูปถ่ายโพลารอยด์ทีละใบ -->
+  <div id="page7" class="card hidden">
+    <h2 style="color: #ff6b81;">📖 My Diary Memories 💖</h2>
+    <p class="photo-counter" id="page7Counter">กำลังเปิดบันทึกความทรงจำ...</p>
+
+    <div class="diary-page" id="photoGrid7"></div>
+  </div>
+
+  <!-- Modal สำหรับขยายรูปภาพใหญ่ -->
+  <div id="imageModal" class="modal hidden" onclick="closeModal()">
+    <span class="close-btn">&times;</span>
+    <img class="modal-content" id="modalImg">
+  </div>
+
+  <script>
+    const CORRECT_PIN = "1009"; // 🔑 รหัสผ่าน 1009
+    let currentPin = "";
+
+    const bgMusic = document.getElementById('bgMusic');
+
+    // ระบบสร้างเสียง Beep ตอนกดคีย์แพด
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeepSound() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.1);
+    }
+
+    // รูปภาพและคำอวยพร หน้า 3 (เปลี่ยนชื่อไฟล์ตามรูปในเครื่องของคุณได้เลย)
+    const photosData = [
+      {
+        img: "20260508021348_1.png",
+        wish: "ขอให้มีความสุขมากๆ ในวันเกิดปีนี้นะครับ! ❤️"
+      },
+      {
+        img: "20260508020059_1.png",
+        wish: "ขอให้ยิ้มเยอะๆ สุขภาพแข็งแรง น่ารักแบบนี้ตลอดไปนะ 😊"
+      },
+      {
+        img: "1D2280A2-A3CF-41DA-BC54-677ED07A7AD5.png",
+        wish: "ขอบคุณที่เข้ามาเป็นเรื่องราวดีๆและสีสันในชีวิตน้าา💕"
+      }
+    ];
+    let currentPhotoIndex = 0;
+
+    // รูปภาพ 13 ใบสำหรับ หน้า 4 (เปลี่ยนชื่อไฟล์ตามรูปในเครื่องของคุณ)
+    const page4Photos = [
+      "897.png", "89.png", "75.png", "84.png",
+      "18.png", "25.png", "4.png", "24.png",
+      "3.png", "5.png", "6.png", "7.png", "9.png"
+    ];
+    let page4Index = 0;
+    let page4Interval;
+
+    // รูปภาพ 8 ใบสำหรับแปะในไดอารี่ หน้า 7 (เปลี่ยนชื่อไฟล์ตามรูปในเครื่องของคุณ)
+    const page7Photos = [
+      "488888888888.png", "48.png", "catblack.png", "14.png",
+      "27.jpg", "111.png", "39.png", "33.png"
+    ];
+    let page7Index = 0;
+    let page7Interval;
+
+    // ระบบ Pin Passcode
+    function pressKey(num) {
+      playBeepSound();
+      if (currentPin.length < 4) {
+        currentPin += num;
+        updateDisplay();
+        if (currentPin.length === 4) {
+          setTimeout(checkPin, 200);
+        }
+      }
+    }
+
+    function clearPin() {
+      playBeepSound();
+      currentPin = "";
+      updateDisplay();
+    }
+
+    function deleteLast() {
+      playBeepSound();
+      currentPin = currentPin.slice(0, -1);
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      let display = "";
+      for (let i = 0; i < 4; i++) {
+        display += (i < currentPin.length) ? "● " : "_ ";
+      }
+      document.getElementById("pinDisplay").innerText = display.trim();
+    }
+
+    function checkPin() {
+      if (currentPin === CORRECT_PIN) {
+        goToPage(2);
+      } else {
+        alert("ทำไมใส่รหัสไม่ถูกต้อง!😾");
+        clearPin();
+      }
+    }
+
+    // ระบบสลับหน้า
+    function goToPage(pageNumber) {
+      document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+      document.getElementById('page' + pageNumber).classList.remove('hidden');
+
+      if (pageNumber === 3) {
+        bgMusic.play().catch(e => console.log("Music error:", e));
+      }
+
+      if (pageNumber === 4) {
+        startPage4Slideshow();
+        startSparkles();
+      }
+
+      if (pageNumber === 7) {
+        startPage7Animation();
+      }
+    }
+
+    // เปิดซองจดหมาย หน้า 2
+    function openEnvelope() {
+      document.getElementById('envelope').style.display = 'none';
+      document.getElementById('giftContent').classList.remove('hidden');
+      
+      const noBtn = document.getElementById('noBtn');
+      noBtn.style.left = '60%';
+      noBtn.style.top = '0px';
+    }
+
+    function moveButton() {
+      const noBtn = document.getElementById('noBtn');
+      const container = document.getElementById('btnGroup');
+      const maxX = container.clientWidth - noBtn.clientWidth;
+      const maxY = 150;
+
+      const randomX = Math.floor(Math.random() * (maxX - 20));
+      const randomY = Math.floor(Math.random() * maxY) - 50;
+
+      noBtn.style.left = randomX + 'px';
+      noBtn.style.top = randomY + 'px';
+    }
+
+    // เลื่อนรูปภาพในหน้า 3 ทีละรูป
+    function nextPhoto() {
+      if (currentPhotoIndex < photosData.length - 1) {
+        currentPhotoIndex++;
+        const card = document.getElementById('photoCard');
+        
+        card.style.animation = 'none';
+        card.offsetHeight;
+        card.style.animation = 'zoomIn 0.5s ease-out';
+
+        document.getElementById('currentImg').src = photosData[currentPhotoIndex].img;
+        document.getElementById('currentWish').innerText = photosData[currentPhotoIndex].wish;
+        document.getElementById('photoCounter').innerText = `รูปที่ ${currentPhotoIndex + 1} จาก ${photosData.length} (คลิกที่รูปเพื่อดูรูปถัดไป)`;
+
+        if (currentPhotoIndex === photosData.length - 1) {
+          document.getElementById('photoCounter').innerText = `รูปที่ 3 จาก 3 (เปิดครบแล้วครับ!)`;
+          document.getElementById('btnToPage4').classList.remove('hidden');
+        }
+      }
+    }
+
+    // เล่นสไลด์โชว์ 13 รูป หน้า 4
+    function startPage4Slideshow() {
+      if (bgMusic.paused) {
+        bgMusic.play().catch(e => console.log("Music error:", e));
+      }
+
+      page4Index = 0;
+      updatePage4Photo();
+
+      page4Interval = setInterval(() => {
+        page4Index++;
+        if (page4Index < page4Photos.length) {
+          updatePage4Photo();
+        } else {
+          clearInterval(page4Interval);
+          document.getElementById('page4Counter').innerText = "แสดงรูปภาพครบทั้ง 13 ใบแล้วนะ! ❤️";
+          document.getElementById('btnToPage5').classList.remove('hidden');
+        }
+      }, 3000);
+    }
+
+    function updatePage4Photo() {
+      const img = document.getElementById('page4Img');
+      img.style.animation = 'none';
+      img.offsetHeight;
+      img.style.animation = 'zoomIn 0.5s ease-out';
+
+      img.src = page4Photos[page4Index];
+      document.getElementById('page4Counter').innerText = `กำลังแสดงรูปภาพใบที่ ${page4Index + 1} จาก 13...`;
+    }
+
+    // ค่อยๆ ทยอยแปะรูปโพลารอยด์ในสมุดไดอารี่ หน้า 7 (เพิ่มระบบคลิกดูรูปใหญ่)
+    function startPage7Animation() {
+      const container = document.getElementById('photoGrid7');
+      container.innerHTML = '';
+      page7Index = 0;
+
+      page7Interval = setInterval(() => {
+        if (page7Index < page7Photos.length) {
+          const polaroid = document.createElement('div');
+          polaroid.className = 'polaroid-item';
+          polaroid.style.cursor = 'pointer';
+
+          const imgSrc = page7Photos[page7Index];
+          const img = document.createElement('img');
+          img.src = imgSrc;
+
+          // เพิ่ม Event เมื่อกดคลิกที่รูปให้เปิด Pop-up
+          polaroid.onclick = () => openModal(imgSrc);
+
+          polaroid.appendChild(img);
+          container.appendChild(polaroid);
+
+          page7Index++;
+          document.getElementById('page7Counter').innerText = `กำลังแปะรูปความทรงจำใบที่ ${page7Index} จาก ${page7Photos.length}...`;
+        } else {
+          clearInterval(page7Interval);
+          document.getElementById('page7Counter').innerText = "(คลิกที่รูปเพื่อดูรูปใหญ่ได้นะ) ❤️✨";
+        }
+      }, 500);
+    }
+
+    // ฟังก์ชันเปิด-ปิด Modal Pop-up รูปขยายใหญ่
+    function openModal(src) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('modalImg');
+      modal.classList.remove('hidden');
+      modalImg.src = src;
+    }
+
+    function closeModal() {
+      document.getElementById('imageModal').classList.add('hidden');
+    }
+
+    // เอฟเฟกต์วิ้งๆ โปรยลงมา
+    let sparkleInterval;
+    function startSparkles() {
+      if (sparkleInterval) return;
+      const symbols = ['✨', '💖', '🌸', '⭐', '💕','❄️'];
+      
+      sparkleInterval = setInterval(() => {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+        sparkle.style.left = Math.random() * 100 + 'vw';
+        sparkle.style.animationDuration = Math.random() * 2 + 3 + 's';
+        sparkle.style.fontSize = Math.random() * 10 + 15 + 'px';
+
+        document.body.appendChild(sparkle);
+
+        setTimeout(() => {
+          sparkle.remove();
+        }, 5000);
+      }, 300);
+    }
+  </script>
+
+</body>
+</html>
